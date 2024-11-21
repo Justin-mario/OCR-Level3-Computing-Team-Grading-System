@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit Team' if team else 'Add New Team' }}{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>{{ 'Edit Team' if team else 'Add New Team' }}</h1>
+
+    <form method="POST" class="team-form">
+        <div class="form-group">
+            <label for="name">Team Name</label>
+            <input type="text" id="name" name="name" value="{{ team.name if team else '' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="avatar_url">Avatar URL</label>
+            <input type="url" id="avatar_url" name="avatar_url" value="{{ team.avatar_url if team else '' }}"
+                   placeholder="https://example.com/image.jpg">
+            {% if team and team.avatar_url %}
+                <div class="avatar-preview">
+                    <img src="{{ team.avatar_url }}" alt="Team Avatar">
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">{{ 'Update Team' if team else 'Create Team' }}</button>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

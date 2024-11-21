@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Team Leadership Management - {{ team.name }}{% endblock %}
+
+{% block content %}
+<div class="leadership-container">
+    <div class="page-header">
+        <h1>{{ team.name }} - Leadership Management</h1>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <div class="leadership-sections">
+        <div class="current-leader-section">
+            <h2>Current Team Leader</h2>
+            <div class="current-leader-card">
+                {% if current_leadership %}
+                    <div class="leader-info">
+                        <div class="leader-name">{{ current_leadership.leader.first_name }}</div>
+                        <div class="leader-period">
+                            {{ current_leadership.week_start_date.strftime('%d %b') }} -
+                            {{ current_leadership.week_end_date.strftime('%d %b %Y') }}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="no-leader">
+                        No current leader assigned
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="assign-leader-section">
+            <h2>Assign New Leader</h2>
+            <form method="POST" action="{{ url_for('admin.assign_leader', team_id=team.id) }}" class="assign-leader-form">
+                <div class="form-group">
+                    <label for="leader_id">Select Member</label>
+                    <select id="leader_id" name="leader_id" required class="form-control">
+                        <option value="">Choose a team member...</option>
+                        {% for member in team.members %}
+                            <option value="{{ member.id }}">{{ member.first_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="week_start_date">Week Start Date</label>
+                    <input type="date" id="week_start_date" name="week_start_date"
+                           required class="form-control"
+                           value="{{ suggested_start_date }}">
+                    <small class="form-text text-muted">Leadership period will be for 1 week</small>
+                </div>
+
+                <button type="submit" class="btn">Assign Leader</button>
+            </form>
+        </div>
+
+        <div class="leadership-history-section">
+            <h2>Leadership History</h2>
+            <div class="leadership-timeline">
+                {% if leadership_history %}
+                    {% for leadership in leadership_history %}
+                        <div class="timeline-item {{ 'current' if leadership == current_leadership }}">
+                            <div class="timeline-date">
+                                {{ leadership.week_start_date.strftime('%d %b') }} -
+                                {{ leadership.week_end_date.strftime('%d %b %Y') }}
+                            </div>
+                            <div class="timeline-content">
+                                <div class="leader-name">{{ leadership.leader.first_name }}</div>
+                                {% if leadership == current_leadership %}
+                                    <span class="current-badge">Current</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-history">No leadership history available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

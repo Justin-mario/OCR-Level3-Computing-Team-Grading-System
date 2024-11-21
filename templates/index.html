@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Team Points Leaderboard{% endblock %}
+
+{% block content %}
+<div class="leaderboard-container">
+    <div class="teams-grid">
+        {% for team in teams %}
+        <div class="team-card {% if loop.index0 < 3 %}top-{{ loop.index }}{% endif %}">
+            <div class="rank-badge">{{ loop.index }}</div>
+
+            <div class="team-header">
+                {% if team.avatar_url %}
+                    <img src="{{ team.avatar_url }}" alt="{{ team.name }}" class="team-avatar">
+                {% else %}
+                    <div class="avatar-placeholder">{{ team.name[0] }}</div>
+                {% endif %}
+                <h2>{{ team.name }}</h2>
+            </div>
+
+            <div class="team-stats">
+                <div class="total-points">{{ team.total_points }}</div>
+                <div class="points-label">TOTAL POINTS</div>
+                <div class="current-leader">
+                    Leader: {% if team.current_leader %}{{ team.current_leader }}{% else %}Not set{% endif %}
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="metric-icon">📊</div>
+                    <div class="metric-label">Attendance</div>
+                    <div class="metric-value">{{ team.metrics.attendance }}</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-icon">👔</div>
+                    <div class="metric-label">Professional</div>
+                    <div class="metric-value">{{ team.metrics.professional }}</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-icon">👑</div>
+                    <div class="metric-label">Leadership</div>
+                    <div class="metric-value">{{ team.metrics.leadership }}</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-icon">🎓</div>
+                    <div class="metric-label">Academic</div>
+                    <div class="metric-value">{{ team.metrics.academic }}</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

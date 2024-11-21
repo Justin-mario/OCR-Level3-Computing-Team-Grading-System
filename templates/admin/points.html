@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Record Team Points{% endblock %}
+
+{% block content %}
+<div class="points-container">
+    <div class="page-header">
+        <h1>Record Team Points</h1>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <div class="points-form-container">
+        <form method="POST" class="points-form">
+            <div class="form-section">
+                <h2>Basic Information</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="team_id">Team</label>
+                        <select id="team_id" name="team_id" required class="form-control">
+                            <option value="">Select a team...</option>
+                            {% for team in teams %}
+                                <option value="{{ team.id }}" {% if selected_team_id|int == team.id %}selected{% endif %}>
+                                    {{ team.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lesson_date">Lesson Date</label>
+                        <input type="date" id="lesson_date" name="lesson_date" required class="form-control"
+                               value="{{ today_date }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lesson_number">Lesson Number</label>
+                        <select id="lesson_number" name="lesson_number" required class="form-control">
+                            <option value="1">Lesson 1</option>
+                            <option value="2">Lesson 2</option>
+                            <option value="3">Lesson 3</option>
+                            <option value="4">Lesson 4</option>
+                            <option value="5">Lesson 5</option>
+                            <option value="6">Lesson 6</option>
+                            <option value="7">Lesson 7</option>
+                            <option value="8">Lesson 8</option>
+                            <option value="9">Lesson 9</option>
+                            <option value="10">Lesson 10</option>
+                            <option value="11">Lesson 11</option>
+                            <option value="12">Lesson 12</option>
+                            <option value="13">Lesson 13</option>
+                            <option value="14">Lesson 14</option>
+                            <option value="15">Lesson 15</option>
+                            <option value="16">Lesson 16</option>
+                            <option value="17">Lesson 17</option>
+                            <option value="18">Lesson 18</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Point Categories</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="attendance_points">
+                            Attendance Points
+                            <span class="max-points">(max 10)</span>
+                        </label>
+                        <input type="number" id="attendance_points" name="attendance_points"
+                               min="0" max="10" step="0.1" required class="form-control"
+                               value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="professional_points">
+                            Professional Standards
+                            <span class="max-points">(max 10)</span>
+                        </label>
+                        <input type="number" id="professional_points" name="professional_points"
+                               min="0" max="10" step="0.1" required class="form-control"
+                               value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="leadership_points">
+                            Leadership Points
+                            <span class="max-points">(max 10)</span>
+                        </label>
+                        <input type="number" id="leadership_points" name="leadership_points"
+                               min="0" max="10" step="0.1" required class="form-control"
+                               value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="academic_points">
+                            Academic Achievement
+                            <span class="max-points">(max 20)</span>
+                        </label>
+                        <input type="number" id="academic_points" name="academic_points"
+                               min="0" max="20" step="0.1" required class="form-control"
+                               value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bonus_points">
+                            Bonus Points
+                            <span class="max-points">(if any)</span>
+                        </label>
+                        <input type="number" id="bonus_points" name="bonus_points"
+                               min="0" step="0.1" class="form-control" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone_penalties">
+                            Phone Penalties
+                            <span class="penalty-note">(-3 points each)</span>
+                        </label>
+                        <input type="number" id="phone_penalties" name="phone_penalties"
+                               min="0" class="form-control" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="total-points-display">
+                <h3>Total Points: <span id="total-points">0</span></h3>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn">Record Points</button>
+                <button type="reset" class="btn btn-secondary">Reset Form</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function calculateTotal() {
+        const attendance = parseFloat(document.getElementById('attendance_points').value) || 0;
+        const professional = parseFloat(document.getElementById('professional_points').value) || 0;
+        const leadership = parseFloat(document.getElementById('leadership_points').value) || 0;
+        const academic = parseFloat(document.getElementById('academic_points').value) || 0;
+        const bonus = parseFloat(document.getElementById('bonus_points').value) || 0;
+        const penalties = (parseInt(document.getElementById('phone_penalties').value) || 0) * 3;
+
+        const total = attendance + professional + leadership + academic + bonus - penalties;
+        document.getElementById('total-points').textContent = total.toFixed(1);
+    }
+
+    // Add event listeners to all input fields
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+        input.addEventListener('input', calculateTotal);
+    });
+
+    // Initial calculation
+    calculateTotal();
+});
+</script>
+{% endblock %}

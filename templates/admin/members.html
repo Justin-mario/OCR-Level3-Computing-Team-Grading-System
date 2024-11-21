@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Team Members - {{ team.name }}{% endblock %}
+
+{% block content %}
+<div class="members-container">
+    <div class="page-header">
+        <h1>{{ team.name }} - Team Members</h1>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <div class="add-member-section">
+        <h2>Add New Member</h2>
+        <form method="POST" class="add-member-form">
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" required
+                       class="form-control" placeholder="Enter member's first name">
+            </div>
+            <button type="submit" class="btn">Add Member</button>
+        </form>
+    </div>
+
+    <div class="current-members">
+        <h2>Current Members ({{ team.members|length }})</h2>
+        {% if team.members %}
+            <div class="members-list">
+                {% for member in team.members %}
+                    <div class="member-card">
+                        <div class="member-info">
+                            <span class="member-name">{{ member.first_name }}</span>
+                        </div>
+                        <div class="member-actions">
+                            <form method="POST"
+                                  action="{{ url_for('admin.remove_member', team_id=team.id, member_id=member.id) }}"
+                                  onsubmit="return confirm('Are you sure you want to remove {{ member.first_name }}?');"
+                                  class="inline-form">
+                                <button type="submit" class="btn btn-danger btn-small">Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-members">No members in this team yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

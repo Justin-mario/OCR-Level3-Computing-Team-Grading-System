@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <section class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-buttons">
+            <a href="{{ url_for('admin.add_team') }}" class="btn">Add New Team</a>
+            <a href="{{ url_for('admin.add_points') }}" class="btn">Record Points</a>
+        </div>
+    </section>
+
+    <div class="dashboard-grid">
+        <!-- Performance Trends -->
+        <div class="chart-card">
+            <h2>Weekly Performance Trends</h2>
+            <canvas id="weeklyTrendsChart"></canvas>
+        </div>
+
+        <!-- Team Comparison -->
+        <div class="chart-card">
+            <h2>Team Comparison</h2>
+            <canvas id="teamComparisonChart"></canvas>
+        </div>
+
+        <!-- Phone Penalties -->
+        <div class="chart-card">
+            <h2>Phone Penalties</h2>
+            <canvas id="penaltiesChart"></canvas>
+        </div>
+
+        <!-- Ranking History -->
+        <div class="chart-card">
+            <h2>Ranking History</h2>
+            <canvas id="rankingHistoryChart"></canvas>
+        </div>
+    </div>
+
+    <section class="teams-overview">
+        <h2>Teams Overview</h2>
+        <div class="teams-grid">
+            {% for team in teams %}
+            <div class="team-card">
+                {% if team.avatar_url %}
+                    <img src="{{ team.avatar_url }}" alt="{{ team.name }}" class="team-avatar">
+                {% else %}
+                    <div class="avatar-placeholder">{{ team.name[0] }}</div>
+                {% endif %}
+                <h3>{{ team.name }}</h3>
+                <div class="team-stats">
+                    <p>Members: {{ team.members|length }}</p>
+                    <p>Total Points: {{ team.total_points }}</p>
+                    <p>Current Leader: {{ team.current_leader or 'Not set' }}</p>
+                </div>
+                <div class="team-actions">
+                    <a href="{{ url_for('admin.edit_team', team_id=team.id) }}" class="btn-small">Edit</a>
+                    <a href="{{ url_for('admin.manage_members', team_id=team.id) }}" class="btn-small">Members</a>
+                    <a href="{{ url_for('admin.manage_leadership', team_id=team.id) }}" class="btn-small">Leadership</a>
+                    <a href="{{ url_for('admin.add_points') }}?team_id={{ team.id }}" class="btn-small">Points</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const weeklyData = {{ weekly_data|tojson }};
+const teamsData = {{ teams_data|tojson }};
+const penaltiesData = {{ penalties_data|tojson }};
+const rankingData = {{ ranking_data|tojson }};
+
+// Charts initialization code remains the same...
+</script>
+{% endblock %}
