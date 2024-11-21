@@ -4,36 +4,32 @@
 
 {% block content %}
 <div class="dashboard">
-    <section class="quick-actions">
+    <div class="quick-actions">
         <h2>Quick Actions</h2>
         <div class="action-buttons">
             <a href="{{ url_for('admin.add_team') }}" class="btn">Add New Team</a>
             <a href="{{ url_for('admin.add_points') }}" class="btn">Record Points</a>
         </div>
-    </section>
+    </div>
 
     <div class="dashboard-grid">
-        <!-- Performance Trends -->
         <div class="chart-card">
-            <h2>Weekly Performance Trends</h2>
+            <h2 class="chart-title">Weekly Performance Trends</h2>
             <canvas id="weeklyTrendsChart"></canvas>
         </div>
 
-        <!-- Team Comparison -->
         <div class="chart-card">
-            <h2>Team Comparison</h2>
+            <h2 class="chart-title">Team Comparison</h2>
             <canvas id="teamComparisonChart"></canvas>
         </div>
 
-        <!-- Phone Penalties -->
         <div class="chart-card">
-            <h2>Phone Penalties</h2>
+            <h2 class="chart-title">Phone Penalties</h2>
             <canvas id="penaltiesChart"></canvas>
         </div>
 
-        <!-- Ranking History -->
         <div class="chart-card">
-            <h2>Ranking History</h2>
+            <h2 class="chart-title">Ranking History</h2>
             <canvas id="rankingHistoryChart"></canvas>
         </div>
     </div>
@@ -70,11 +66,108 @@
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const weeklyData = {{ weekly_data|tojson }};
-const teamsData = {{ teams_data|tojson }};
-const penaltiesData = {{ penalties_data|tojson }};
-const rankingData = {{ ranking_data|tojson }};
+document.addEventListener('DOMContentLoaded', function() {
+    const getColor = (index, alpha = 1) => {
+        const colors = [
+            `rgba(75, 192, 192, ${alpha})`,  // teal
+            `rgba(255, 99, 132, ${alpha})`,  // red
+            `rgba(54, 162, 235, ${alpha})`,  // blue
+            `rgba(255, 206, 86, ${alpha})`,  // yellow
+            `rgba(153, 102, 255, ${alpha})`, // purple
+            `rgba(255, 159, 64, ${alpha})`   // orange
+        ];
+        return colors[index % colors.length];
+    };
 
-// Charts initialization code remains the same...
+    // Weekly Performance Trends
+    new Chart(document.getElementById('weeklyTrendsChart'), {
+        type: 'line',
+        data: {{ weekly_data|tojson }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Team Comparison
+    new Chart(document.getElementById('teamComparisonChart'), {
+        type: 'radar',
+        data: {
+            labels: ['Attendance', 'Professional', 'Leadership', 'Academic'],
+            datasets: {{ teams_data|tojson }}
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    suggestedMax: 10
+                }
+            }
+        }
+    });
+
+    // Phone Penalties
+    new Chart(document.getElementById('penaltiesChart'), {
+        type: 'bar',
+        data: {{ penalties_data|tojson }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+    // Ranking History
+    new Chart(document.getElementById('rankingHistoryChart'), {
+        type: 'line',
+        data: {{ ranking_data|tojson }},
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    reverse: true,
+                    min: 1,
+                    max: {{ teams_count }},
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+    // Add colors to all datasets
+    const charts = ['weeklyTrendsChart', 'teamComparisonChart', 'penaltiesChart', 'rankingHistoryChart'];
+    charts.forEach(chartId => {
+        const chart = Chart.getChart(chartId);
+        if (chart) {
+            chart.data.datasets.forEach((dataset, index) => {
+                dataset.borderColor = getColor(index);
+                dataset.backgroundColor = getColor(index, 0.2);
+            });
+            chart.update();
+        }
+    });
+});
 </script>
 {% endblock %}
