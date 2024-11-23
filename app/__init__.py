@@ -1,8 +1,3 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-import os
-
 # Initialize Flask extensions
 # db = SQLAlchemy()
 # login_manager = LoginManager()
@@ -11,9 +6,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import Config
 import os
+import sys
 
 db = SQLAlchemy()
 login_manager = LoginManager()
+
+# Add parent directory to Python path for imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def create_app():
     app = Flask(__name__,
