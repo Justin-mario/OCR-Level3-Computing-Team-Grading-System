@@ -28,50 +28,7 @@ class Team(db.Model):
     points = db.relationship('TeamPoints', backref='team', lazy=True)
     leadership_schedule = db.relationship('TeamLeadership', backref='team', lazy=True)
 
-    # def get_current_leader(self):
-    #     """Get the current team leader based on the current week"""
-    #     current_date = datetime.utcnow().date()
-    #     leadership = TeamLeadership.query.filter(
-    #         TeamLeadership.team_id == self.id,
-    #         TeamLeadership.week_start_date <= current_date,
-    #         TeamLeadership.week_end_date >= current_date
-    #     ).first()
-    #
-    #     if leadership and leadership.leader:
-    #         return leadership.leader.first_name
-    #     return None
-    #
-    # def get_metrics(self):
-    #     total_points = 0
-    #     attendance = 0
-    #     professional = 0
-    #     leadership = 0
-    #     academic = 0
-    #     count = 0
-    #
-    #     for point in self.points:
-    #         total_points += point.total_points
-    #         attendance += point.attendance_points
-    #         professional += point.professional_points
-    #         leadership += point.leadership_points
-    #         academic += point.academic_points
-    #         count += 1
-    #
-    #     if count > 0:
-    #         return {
-    #             'total': total_points,
-    #             'attendance': round(attendance / count, 1),
-    #             'professional': round(professional / count, 1),
-    #             'leadership': round(leadership / count, 1),
-    #             'academic': round(academic / count, 1)
-    #         }
-    #     return {
-    #         'total': 0,
-    #         'attendance': 0,
-    #         'professional': 0,
-    #         'leadership': 0,
-    #         'academic': 0
-    #     }
+
     def get_metrics(self):
         from sqlalchemy import func
         from app import db

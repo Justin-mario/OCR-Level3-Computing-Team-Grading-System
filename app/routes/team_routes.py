@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template
 from app.models.entities import Team, TeamPoints
-from sqlalchemy import func
 
 team_bp = Blueprint('team', __name__)
 
